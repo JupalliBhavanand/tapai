@@ -29,12 +29,12 @@ jobs:
           GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ -z "$GEMINI_KEY" ]; then
-            echo "::error::GEMINI_API_KEY environment secret is empty!"
+            echo "::error::GEMINI_API_KEY secret is empty or unavailable!"
             exit 1
           fi
           
-          # Replace placeholder in all HTML and JS files in repository
-          find . -type f \( -name "*.html" -o -name "*.js" \) -exec sed -i "s|__GEMINI_API_KEY__|$GEMINI_KEY|g" {} +
+          # Replaces __GEMINI_API_KEY__ in index.html
+          sed -i "s|__GEMINI_API_KEY__|$GEMINI_KEY|g" index.html
 
       - name: Setup Pages
         uses: actions/upload-pages-artifact@v3
