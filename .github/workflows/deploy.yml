@@ -24,16 +24,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Safe string replacement using Environment Variables and pipe delimiter
       - name: Replace Gemini API Key Placeholder
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ -z "$GEMINI_KEY" ]; then
-            echo "::error::GEMINI_API_KEY secret is missing or empty!"
+            echo "::error::GEMINI_API_KEY environment secret is empty!"
             exit 1
           fi
-          sed -i "s|__GEMINI_API_KEY__|$GEMINI_KEY|g" index.html
+          
+          # Replace placeholder in all HTML and JS files in repository
+          find . -type f \( -name "*.html" -o -name "*.js" \) -exec sed -i "s|__GEMINI_API_KEY__|$GEMINI_KEY|g" {} +
 
       - name: Setup Pages
         uses: actions/upload-pages-artifact@v3
