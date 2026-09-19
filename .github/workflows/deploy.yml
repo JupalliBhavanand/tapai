@@ -1,9 +1,8 @@
-name: Build and Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -22,17 +21,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Replace API Key Placeholder
+      # Replaces __GEMINI_API_KEY__ in index.html with the secret GEMINI_API_KEY
+      - name: Replace Gemini API Key Placeholder
         run: |
           sed -i 's/__GEMINI_API_KEY__/${{ secrets.GEMINI_API_KEY }}/g' index.html
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
