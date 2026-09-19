@@ -24,10 +24,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Replaces __GEMINI_API_KEY__ in index.html with the secret GEMINI_API_KEY
+      # Safe string replacement using Environment Variables and pipe delimiter
       - name: Replace Gemini API Key Placeholder
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          sed -i 's/__GEMINI_API_KEY__/${{ secrets.GEMINI_API_KEY }}/g' index.html
+          if [ -z "$GEMINI_KEY" ]; then
+            echo "::error::GEMINI_API_KEY secret is missing or empty!"
+            exit 1
+          fi
+          sed -i "s|__GEMINI_API_KEY__|$GEMINI_KEY|g" index.html
 
       - name: Setup Pages
         uses: actions/upload-pages-artifact@v3
