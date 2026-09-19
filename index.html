@@ -665,7 +665,7 @@
             // Attach directly to window object so window.apiKey works in console
             window.apiKey = "__GEMINI_API_KEY__";
 
-            if (!window.apiKey || window.apiKey === "__GEMINI_API_KEY__") {
+            if (!window.apiKey || window.apiKey === "__GEMINI_API_KEY__") { {
                 console.error("API Key was not replaced during GitHub Actions deployment.");
                 const fallback = "API Key unavailable. Ensure GitHub Actions workflow replaced the placeholder during build.";
                 appendChatMessage('representative', fallback);
