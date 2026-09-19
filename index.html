@@ -662,9 +662,10 @@
         async function queryGemini(promptText) {
             setAvatarState('thinking');
 
-            const apiKey = "__GEMINI_API_KEY__";
+            // Attach directly to window object so window.apiKey works in console
+            window.apiKey = "__GEMINI_API_KEY__";
 
-            if (!apiKey || apiKey === "__GEMINI_API_KEY__") {
+            if (!window.apiKey || window.apiKey === "__GEMINI_API_KEY__") {
                 console.error("API Key was not replaced during GitHub Actions deployment.");
                 const fallback = "API Key unavailable. Ensure GitHub Actions workflow replaced the placeholder during build.";
                 appendChatMessage('representative', fallback);
@@ -674,7 +675,7 @@
 
             try {
                 const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.apiKey}`,
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -689,6 +690,11 @@
                 );
 
                 const data = await response.json();
+
+                if (data?.error) {
+                    throw new Error(data.error.message || 'API Error');
+                }
+
                 const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (replyText) {
